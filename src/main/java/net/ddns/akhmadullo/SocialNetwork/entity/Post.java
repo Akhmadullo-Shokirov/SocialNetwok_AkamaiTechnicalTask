@@ -7,6 +7,8 @@ import jakarta.persistence.Id;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 @Entity
 @Component
 public class Post {
@@ -20,6 +22,8 @@ public class Post {
     private String content;
     private int viewCount;
 
+    private LocalDate date;
+
     public Post() {
 
     }
@@ -28,6 +32,7 @@ public class Post {
         this.author = author;
         this.content = content;
         this.viewCount = viewCount;
+        this.date = LocalDate.now();
     }
 
     public String getId() {
@@ -56,5 +61,13 @@ public class Post {
 
     public void setViewCount(int viewCount) {
         this.viewCount = viewCount;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 }
