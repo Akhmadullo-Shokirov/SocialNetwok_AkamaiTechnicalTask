@@ -31,7 +31,7 @@ public class Post {
     public Post(String author, String content, int viewCount) {
         this.author = author;
         this.content = content;
-        this.viewCount = viewCount;
+        this.viewCount += viewCount;
         this.date = LocalDate.now();
     }
 
@@ -59,8 +59,8 @@ public class Post {
         return viewCount;
     }
 
-    public void setViewCount(int viewCount) {
-        this.viewCount = viewCount;
+    public void incrementViewCount(int incrementBy) {
+        this.viewCount += incrementBy;
     }
 
     public LocalDate getDate() {
