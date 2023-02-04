@@ -1,13 +1,15 @@
 package net.ddns.akhmadullo.SocialNetwork.controller;
 
 import net.ddns.akhmadullo.SocialNetwork.entity.Post;
+import net.ddns.akhmadullo.SocialNetwork.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/post")
+@RequestMapping("/social-network-post")
 @CrossOrigin
 public class PostRestHandler {
 
@@ -15,27 +17,28 @@ public class PostRestHandler {
     private PostService postService;
 
     @PostMapping("/create")
-    public String save(@RequestBody PostService.PostWrapper newPost) {
+    public ResponseEntity<String> save(@RequestBody PostService.PostWrapper newPost) {
         return postService.save(newPost);
     }
 
     @GetMapping("/view/{postId}")
-    public Post view(@PathVariable String postId) {
+    public ResponseEntity<Post> view(@PathVariable String postId) {
         return postService.view(postId);
     }
 
     @PutMapping("/update/{postId}")
-    public String update(@PathVariable String postId, @RequestBody PostService.PostWrapper postWrapper) {
+    public ResponseEntity<String> update(@PathVariable String postId,
+                                         @RequestBody PostService.PostWrapper postWrapper) {
         return postService.update(postId, postWrapper);
     }
 
     @DeleteMapping("/delete/{postId}")
-    public String delete(@PathVariable String postId) {
+    public ResponseEntity<String> delete(@PathVariable String postId) {
         return postService.delete(postId);
     }
 
-    @GetMapping("/top10views")
-    public List<Post> viewTop10() {
-        return postService.viewTop10();
+    @GetMapping("/top-ten-views")
+    public ResponseEntity<List<Post>> viewTopTen() {
+        return postService.viewTopTen();
     }
 }
