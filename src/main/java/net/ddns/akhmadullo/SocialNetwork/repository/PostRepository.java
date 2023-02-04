@@ -10,5 +10,5 @@ public interface PostRepository extends CrudRepository<Post, String> {
 
     @Query(value = "SELECT * FROM POST " +
             "ORDER BY view_count DESC LIMIT 10", nativeQuery = true)
-    List<Post> findTop10Views();
+    List<Post> findTopTenViews();
 }

@@ -4,6 +4,7 @@ package net.ddns.akhmadullo.SocialNetwork.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.stereotype.Component;
 
@@ -19,19 +20,17 @@ public class Post {
     private String id;
 
     private String author;
+    @Lob
     private String content;
     private int viewCount;
 
     private LocalDate date;
 
-    public Post() {
-
-    }
-
-    public Post(String author, String content, int viewCount) {
+    public Post() {}
+    public Post(String author, String content) {
         this.author = author;
         this.content = content;
-        this.viewCount += viewCount;
+        this.viewCount = 0;
         this.date = LocalDate.now();
     }
 
