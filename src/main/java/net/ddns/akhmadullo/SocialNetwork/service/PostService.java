@@ -1,17 +1,23 @@
 package net.ddns.akhmadullo.SocialNetwork.service;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import net.ddns.akhmadullo.SocialNetwork.entity.Post;
 import net.ddns.akhmadullo.SocialNetwork.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class PostService {
+
     @Autowired
     private PostRepository postRepository;
 
@@ -25,52 +31,52 @@ public class PostService {
         private String content;
     }
 
-    public String save(PostWrapper postWrapper) {
-        Post newPost = new Post();
-        newPost.setDate(LocalDate.now());
-        newPost.setAuthor(postWrapper.getAuthor());
-        newPost.setContent(postWrapper.getContent());
-        newPost.incrementViewCount(0);
+    public ResponseEntity<String> save(PostWrapper postWrapper) {
+        if (postWrapper.getAuthor().equals("") || postWrapper.getContent().equals("")) {
+            return new ResponseEntity<>("Author or content field is empty", HttpStatus.BAD_REQUEST);
+        }
+        Post newPost = new Post(postWrapper.getAuthor(), postWrapper.getContent());
         postRepository.save(newPost);
-
-        return "Saved a new post with the id: " + newPost.getId();
+        return new ResponseEntity<>("Saved a new post with the id: " + newPost.getId(), HttpStatus.OK);
     }
 
-    public Post view(String postId) {
+    public ResponseEntity<Post> view(String postId) {
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isPresent()) {
             Post postToView = optionalPost.get();
             postToView.incrementViewCount(1);
             postRepository.save(postToView);
-            return postToView;
+            return new ResponseEntity<>(postToView, HttpStatus.OK);
         }
-        return null;
+        return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
     }
 
-    public String update(String postId, PostWrapper postWrapper) {
+    public ResponseEntity<String> update(String postId, PostWrapper postWrapper) {
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isPresent()) {
             Post postToUpdate = optionalPost.get();
-            postToUpdate.setAuthor(postWrapper.getAuthor());
-            postToUpdate.setContent(postWrapper.getContent());
-            postRepository.save(postToUpdate);
-            return "Updated successfully.";
+            if (postToUpdate.getAuthor().equals(postWrapper.getAuthor())) {
+                postToUpdate.setContent(postWrapper.getContent());
+                postRepository.save(postToUpdate);
+                return new ResponseEntity<>("Updated successfully.", HttpStatus.OK);
+            }
+            return new ResponseEntity<>("The content author did not match", HttpStatus.UNAUTHORIZED);
         }
 
-        return "Post not found";
+        return new ResponseEntity<>("Post not found", HttpStatus.BAD_REQUEST);
     }
 
-    public String delete(String postId) {
+    public ResponseEntity<String> delete(String postId) {
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isPresent()) {
             postRepository.deleteById(postId);
-            return "Deleted successfully";
+            return new ResponseEntity<>("Deleted successfully", HttpStatus.OK);
         }
 
-        return "Post not found";
+        return new ResponseEntity<>("Post not found", HttpStatus.BAD_REQUEST);
     }
 
-    public List<Post> viewTop10() {
-        return postRepository.findTop10Views();
+    public ResponseEntity<List<Post>> viewTopTen() {
+        return new ResponseEntity<>(postRepository.findTopTenViews(), HttpStatus.OK);
     }
 }
